@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Blue Ridge B - Reservation</title>
+    <link rel="stylesheet" href="Staff.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="top-bar" id="top-bar">
+        <div class="menu-icon" onclick="toggleSidebar()">&#9776;</div> <!-- Menu icon -->
+        <h2>Staff</h2>
+    </div>
+    <div class="sidebar hidden" id="sidebar"> <!-- Added hidden class here -->
+        <div class="sidebar-top-bar">
+            <img src="Lbrb.png" alt="Logo" class="logo">
+            <h2>Barangay Records</h2>
+        </div>
+        <ul>
+            <li><a href="index.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">Home</a></li>
+            <li><a href="Messages1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=12623&format=png&color=FFFFFF" alt="Message">Message</a></li>
+            <li><a href="Resident1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=9491&format=png&color=FFFFFF" alt="Resident">Resident</a></li>
+            <li><a href="Staff.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=11777&format=png&color=FFFFFF" alt="Staff">Staff</a></li>
+            <li><a href="Reservation1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/warehouse.png" alt="Reservation">Reservation</a></li>
+            <li><a href="Announcement1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/megaphone.png" alt="Announcement">Announcement</a></li>
+            <li><a href="Login1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/logout-rounded.png" alt="Log Out">Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content" id="main-content">
+<div class="container">
+    <h1>Staff List</h1>
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="showTab('staff')">Staff</button>
+        <button class="tab-btn" onclick="showTab('archive')">Archive</button>
+    </div>
+    <div class="actions">
+        <input type="text" id="search-bar" placeholder="Search staff..." oninput="filterStaff()">
+        <button onclick="openAddModal()">
+            <img src="https://img.icons8.com/ios-filled/50/ffffff/plus-math.png" alt="Add"> Add Staff
+        </button>
+    </div>
+    <div id="staff" class="tab-content active">
+        <ul class="staff-list" id="staff-list">
+        </ul>
+    </div>
+    <div id="archive" class="tab-content">
+        <ul class="staff-list" id="archive-list">
+            <!-- Archived staff will appear here -->
+        </ul>
+    </div>
+</div>
+</div>
+
+<!-- Staff Preview Modal -->
+<div class="modal" id="staff-preview-modal">
+<div class="modal-content">
+    <div class="modal-header">
+        <h2>Staff Preview</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div id="staff-preview" class="preview">
+            <!-- Preview will be dynamically populated here -->
+        </div>
+        <div id="action-buttons" style="display: none;">
+            <button class="edit-btn" onclick="openEditModal()">Edit</button>
+            <button class="archive-btn" onclick="archiveStaff()">Archive</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Add/Edit Staff Modal -->
+<div class="modal" id="add-edit-modal">
+<div class="modal-content">
+    <div class="modal-header">
+        <h2 id="modal-title">Add Staff</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form id="staff-form">
+            <label for="full-name">Full Name:</label>
+            <input type="text" id="full-name" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+
+            <label for="position">Position:</label>
+            <input type="text" id="position" required>
+
+            <label for="contact">Contact No:</label>
+            <input type="text" id="contact" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <label for="birthday">Birthday:</label>
+            <input type="date" id="birthday" required>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" required>
+
+            <label for="sss">SSS No:</label>
+            <input type="text" id="sss">
+
+            <label for="tin">TIN No:</label>
+            <input type="text" id="tin">
+
+            <label for="pagibig">PAG-IBIG No:</label>
+            <input type="text" id="pagibig">
+
+            <label for="blood-type">Blood Type:</label>
+            <select id="blood-type">
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+
+
+            <button type="button" onclick="saveStaff()">Save</button>
+        </form>
+    </div>
+</div>
+</div>
+
+<script>
+let staffList = []; // Array to store staff data
+let currentStaff = null;
+
+function openAddModal() {
+document.getElementById('add-edit-modal').style.display = 'flex';
+document.getElementById('modal-title').innerText = 'Add Staff';
+document.getElementById('staff-form').reset();
+currentStaff = null; // Reset current staff
+}
+
+function viewStaffPreview(name, gender, position, contact, email, birthday, city, sss, tin, pagibig, bloodType) {
+currentStaff = { name, gender, position, contact, email, birthday, city, sss, tin, pagibig, bloodType};
+
+const previewDiv = document.getElementById('staff-preview');
+previewDiv.innerHTML = `
+    <span><strong>Name:</strong> ${name}</span>
+    <span><strong>Gender:</strong> ${gender}</span>
+    <span><strong>Position:</strong> ${position}</span>
+    <span><strong>Contact No:</strong> ${contact}</span>
+    <span><strong>Email:</strong> ${email}</span>
+    <span><strong>Birthday:</strong> ${birthday}</span>
+    <span><strong>City:</strong> ${city}</span>
+    <span><strong>SSS No:</strong> ${sss}</span>
+    <span><strong>TIN No:</strong> ${tin}</span>
+    <span><strong>PAG-IBIG NO:</strong> ${pagibig}</span>
+    <span><strong>Blood Type:</strong> ${bloodType}</span>
+
+`;
+
+// Show action buttons in regular staff preview
+document.getElementById('action-buttons').style.display = 'block';
+
+document.getElementById('staff-preview-modal').style.display = 'flex';
+}
+
+function openEditModal() {
+if (!currentStaff) return;
+
+document.getElementById('add-edit-modal').style.display = 'flex';
+document.getElementById('modal-title').innerText = 'Edit Staff';
+
+// Pre-fill the form with the current staff's details
+document.getElementById('full-name').value = currentStaff.name;
+document.getElementById('gender').value = currentStaff.gender;
+document.getElementById('position').value = currentStaff.position;
+document.getElementById('contact').value = currentStaff.contact;
+document.getElementById('email').value = currentStaff.email;
+document.getElementById('birthday').value = currentStaff.birthday;
+document.getElementById('city').value = currentStaff.city;
+document.getElementById('sss').value = currentStaff.sss;
+document.getElementById('tin').value = currentStaff.tin;
+document.getElementById('pagibig').value = currentStaff.pagibig;
+document.getElementById('blood-type').value = currentStaff.bloodType;
+
+}
+
+function saveStaff() {
+const name = document.getElementById('full-name').value;
+const gender = document.getElementById('gender').value;
+const position = document.getElementById('position').value;
+const contact = document.getElementById('contact').value;
+const email = document.getElementById('email').value;        
+const birthday = document.getElementById('birthday').value;
+const city = document.getElementById('city').value;
+const sss = document.getElementById('sss').value;
+const tin = document.getElementById('tin').value;
+const pagibig = document.getElementById('pagibig').value;
+const bloodType = document.getElementById('blood-type').value;
+
+
+if (!name || !gender || !position || !contact || !email || !birthday || !city || !sss || !tin || !pagibig || !bloodType) {
+    alert('Please fill out all required fields.');
+    return;
+}
+
+const list = document.getElementById('staff-list');
+if (currentStaff) {
+    // Update existing staff
+    const staffItems = list.getElementsByTagName('li');
+    for (let item of staffItems) {
+        if (item.textContent.includes(currentStaff.name)) {
+            // Update the onclick attribute with the new data
+            item.innerHTML = `
+                <span onclick="viewStaffPreview('${name}', '${gender}', '${position}', '${contact}', '${email}', '${birthday}', '${city}', '${sss}', '${tin}', '${pagibig}', '${bloodType}')">${name}</span>
+            `;
+            break;
+        }
+    }
+
+    // Update the currentStaff object with the new values
+    currentStaff = { name, gender, position, contact, email, birthday, city, sss, tin, pagibig, bloodType};
+} else {
+    // Add new staff
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <span onclick="viewStaffPreview('${name}', '${gender}', '${position}', '${contact}', '${email}', '${birthday}', '${city}', '${sss}', '${tin}', '${pagibig}', '${bloodType}')">${name}</span>
+    `;
+    list.appendChild(li);
+}
+
+closeModal();
+}
+
+function archiveStaff() {
+if (currentStaff) {
+    const archiveList = document.getElementById('archive-list');
+    const li = document.createElement('li');
+    li.innerHTML = `
+        <span onclick="viewArchivedStaffPreview('${currentStaff.name}', '${currentStaff.gender}', '${currentStaff.position}', '${currentStaff.contact}', '${currentStaff.email}', '${currentStaff.birthday}', '${currentStaff.city}', '${currentStaff.sss}', '${currentStaff.tin}', '${currentStaff.pagibig}', '${currentStaff.bloodType}')">
+            ${currentStaff.name}
+        </span>
+    `;
+    archiveList.appendChild(li);
+
+    // Remove from staff list
+    const staffList = document.getElementById('staff-list');
+    const staffItems = staffList.getElementsByTagName('li');
+    for (let i = 0; i < staffItems.length; i++) {
+        if (staffItems[i].textContent.includes(currentStaff.name)) {
+            staffList.removeChild(staffItems[i]);
+            break;
+        }
+    }
+
+    // Close modal and reset currentStaff
+    closeModal();
+    currentStaff = null;
+
+    alert('Staff archived successfully!');
+}
+}
+
+// Function to preview archived staff details
+function viewArchivedStaffPreview(name, gender, position, contact, email, birthday, city, sss, tin, pagibig, bloodType) {
+const previewDiv = document.getElementById('staff-preview');
+previewDiv.innerHTML = `
+    <span><strong>Name:</strong> ${name}</span>
+    <span><strong>Gender:</strong> ${gender}</span>
+    <span><strong>Position:</strong> ${position}</span>
+    <span><strong>Contact No:</strong> ${contact}</span>
+    <span><strong>Email:</strong> ${email}</span>
+    <span><strong>Birthday:</strong> ${birthday}</span>
+    <span><strong>City:</strong> ${city}</span>
+    <span><strong>SSS No:</strong> ${sss}</span>
+    <span><strong>TIN No:</strong> ${tin}</span>
+    <span><strong>PAG-IBIG NO:</strong> ${pagibig}</span>
+    <span><strong>Blood Type:</strong> ${bloodType}</span>
+    
+`;
+
+document.getElementById('action-buttons').style.display = 'none';
+
+document.getElementById('staff-preview-modal').style.display = 'flex';
+}
+
+function closeModal() {
+document.getElementById('staff-preview-modal').style.display = 'none';
+document.getElementById('add-edit-modal').style.display = 'none';
+}
+
+function showTab(tab) {
+const tabs = document.querySelectorAll('.tab-content');
+const buttons = document.querySelectorAll('.tab-btn');
+tabs.forEach(t => t.classList.remove('active'));
+buttons.forEach(b => b.classList.remove('active'));
+document.getElementById(tab).classList.add('active');
+event.target.classList.add('active');
+}
+
+function filterStaff() {
+const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+const staffList = document.getElementById('staff-list');
+const staff = staffList.getElementsByTagName('li');
+
+for (let i = 0; i < staff.length; i++) {
+    const staffName = staff[i].textContent.toLowerCase();
+    if (staffName.includes(searchQuery)) {
+        staff[i].style.display = 'flex';
+    } else {
+        staff[i].style.display = 'none';
+    }
+}
+}
+
+function toggleSidebar() {
+    var sidebar = document.getElementById("sidebar");
+    var mainContent = document.getElementById("main-content");
+    var topBar = document.getElementById("top-bar");
+    if (sidebar.classList.contains("hidden")) {
+        sidebar.classList.remove("hidden");
+        mainContent.style.marginLeft = "270px";
+        topBar.style.marginLeft = "270px";
+    } else {
+        sidebar.classList.add("hidden");
+        mainContent.style.marginLeft = "0";
+        topBar.style.marginLeft = "0";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const sidebarLinks = document.querySelectorAll(".sidebar ul li");
+
+    sidebarLinks.forEach((link) => {
+        link.addEventListener("click", function () {
+            sidebarLinks.forEach((item) => item.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+});
+</script>
+</body>
+</html>

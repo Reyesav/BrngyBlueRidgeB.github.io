@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Blue Ridge B - Messages</title>
+    <link rel="stylesheet" href="Messages1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="email-container">
+        <aside class="sidebar">
+            <h2>
+                <a href="index.html" style="text-decoration: none; color: white;">
+                    <i class="fas fa-arrow-left"></i>
+                </a> 
+                Messages
+            </h2>
+            <div class="search-bar">
+                <input type="text" placeholder="Search messages...">
+            </div>
+            <ul class="user-list">
+                <li onclick="openChat('User 1')">User 1</li>
+                <li onclick="openChat('User 2')">User 2</li>
+            </ul>
+            <div class="compose-btn" onclick="openComposeModal()">Compose Message</div>
+        </aside>
+        <main class="email-content">
+            <section class="email-view" id="email-view">
+                <p>Select a user to view message</p>
+            </section>
+        </main>
+    </div>
+    <div class="compose-modal" id="compose-modal">
+        <div class="modal-content">
+            <h3>Compose Message</h3>
+            <input type="text" id="compose-recipient" placeholder="Recipient Name">
+            <textarea id="compose-message" placeholder="Type your message..."></textarea>
+    
+            <!-- Attach File Section -->
+            <input type="file" id="file-attachment" accept="image/*,video/*,.pdf,.doc,.docx,.txt" onchange="previewAttachment()">
+            <div class="attachment-preview" id="attachment-preview"></div>
+    
+            <button onclick="sendComposeMessage()">Send Message</button>
+            <button onclick="closeComposeModal()">Cancel</button>
+        </div>
+    </div>
+    <div class="message-box">
+        <!-- Input container for text and attachment -->
+        <div class="input-container">
+            <!-- Paperclip icon for file attachment -->
+            <label for="message-attachment">
+                <i class="fas fa-paperclip"></i>
+            </label>
+            <input type="file" id="message-attachment" accept="image/*,video/*,.pdf,.doc,.docx,.txt" style="display: none;" onchange="handleAttachment()">
+
+            <!-- Message input field -->
+            <input type="text" id="message-input" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+
+            <!-- Send button -->
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+        <!-- Attachment preview section -->
+        <div id="attachment-preview-box" class="attachment-preview-box" style="display: none;">
+            <div id="attachment-content"></div>
+            <button class="remove-btn" onclick="removeAttachment()">×</button>
+        </div>
+    </div>
+
+
+    <script>
+        let currentChat = "";
+        let currentAttachment = null;
+
+    let chatHistory = JSON.parse(localStorage.getItem("chatHistory")) || {
+        "User 1": [],
+        "User 2": []
+    };
+
+    function saveChatHistory() {
+        localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+    }
+
+    function openChat(user) {
+        currentChat = user;
+        const chatBox = document.getElementById('email-view');
+        chatBox.innerHTML = `<h3>${user}</h3>`;
+        
+        chatHistory[user].forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.padding = "10px";
+            messageDiv.style.margin = "10px 0";
+            messageDiv.style.border = "1px solid #ccc";
+            messageDiv.style.borderRadius = "5px";
+            messageDiv.style.background = message.isUser ? "#a29bfe" : "#dfe6e9";
+            messageDiv.style.color = message.isUser ? "white" : "black";
+            
+            if (message.text) {
+                const textPara = document.createElement('p');
+                textPara.textContent = message.text;
+                messageDiv.appendChild(textPara);
+            }
+            
+            if (message.attachment) {
+                if (message.attachment.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = message.attachment.url;
+                    img.style.maxWidth = "150px";
+                    img.style.cursor = "pointer";
+                    img.onclick = () => previewMedia(message.attachment.url, 'image');
+                    messageDiv.appendChild(img);
+                } else if (message.attachment.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = message.attachment.url;
+                    video.controls = true;
+                    video.style.maxWidth = "200px";
+                    video.style.cursor = "pointer";
+                    video.onclick = () => previewMedia(message.attachment.url, 'video');
+                    messageDiv.appendChild(video);
+                }
+            }
+            chatBox.appendChild(messageDiv);
+        });
+    }
+
+    function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+        }
+    }
+
+    function handleAttachment() {
+            const fileInput = document.getElementById('message-attachment');
+            const attachmentPreviewBox = document.getElementById('attachment-preview-box');
+            const attachmentContent = document.getElementById('attachment-content');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                currentAttachment = file;
+
+                // Display the attachment preview
+                attachmentPreviewBox.style.display = 'flex';
+                attachmentContent.innerHTML = '';
+
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    attachmentContent.appendChild(img);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = URL.createObjectURL(file);
+                    video.controls = true;
+                    video.style.maxWidth = '100px';
+                    video.style.maxHeight = '100px';
+                    attachmentContent.appendChild(video);
+                } else {
+                    const fileInfo = document.createElement('div');
+                    fileInfo.className = 'file-info';
+                    fileInfo.textContent = file.name;
+                    attachmentContent.appendChild(fileInfo);
+                }
+            } else {
+                attachmentPreviewBox.style.display = 'none';
+                currentAttachment = null;
+            }
+        }
+
+        function removeAttachment() {
+            const fileInput = document.getElementById('message-attachment');
+            const attachmentPreviewBox = document.getElementById('attachment-preview-box');
+
+            fileInput.value = ''; // Clear the file input
+            attachmentPreviewBox.style.display = 'none'; // Hide the preview box
+            currentAttachment = null; // Reset the current attachment
+        }
+
+
+        // Function to send the message with attachment
+        function sendMessage() {
+        const input = document.getElementById('message-input');
+        const fileInput = document.getElementById('message-attachment');
+        const message = input.value.trim();
+        const attachment = fileInput.files[0];
+        
+        if (message === "" && !currentAttachment) {
+                alert("Please enter a message or attach a file.");
+                return;
+            }
+
+            const messageObj = {
+                text: message,
+                attachment: currentAttachment ? {
+                    name: currentAttachment.name,
+                    type: currentAttachment.type,
+                    url: URL.createObjectURL(currentAttachment)
+                } : null
+            };
+
+        chatHistory[currentChat].push(messageObj);
+        saveChatHistory();
+        openChat(currentChat);
+        input.value = "";
+        fileInput.value = "";
+        
+        console.log("Message sent:", messageObj);
+
+// Clear the input and attachment
+input.value = '';
+removeAttachment();
+}
+        function openComposeModal() {
+            document.getElementById('compose-modal').style.display = 'flex';
+        }
+
+        function closeComposeModal() {
+            document.getElementById('compose-modal').style.display = 'none';
+        }
+
+ // Function to handle file attachment preview
+function previewAttachment() {
+    const fileInput = document.getElementById('file-attachment');
+    const previewContainer = document.getElementById('attachment-preview');
+    previewContainer.innerHTML = ''; // Clear previous preview
+
+    const file = fileInput.files[0];
+    if (file) {
+        const fileType = file.type;
+        const fileName = file.name;
+
+        const fileInfo = document.createElement('div');
+        fileInfo.classList.add('file-info');
+        fileInfo.textContent = fileName;
+
+        if (fileType.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            previewContainer.appendChild(img);
+        } else if (fileType.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(file);
+            video.controls = true;
+            previewContainer.appendChild(video);
+        } else {
+            previewContainer.appendChild(fileInfo); // For non-image/video files
+        }
+    }
+}
+
+// Function to send composed message with an attachment
+function sendComposeMessage() {
+        const recipient = document.getElementById('compose-recipient').value.trim();
+        const message = document.getElementById('compose-message').value.trim();
+        const fileInput = document.getElementById('file-attachment');
+        const attachment = fileInput.files[0];
+
+        if (recipient && message) {
+            if (chatHistory[recipient]) {
+                const messageObj = {
+                    text: message,
+                    isUser: true,
+                    attachment: attachment ? {
+                        name: attachment.name,
+                        type: attachment.type,
+                        url: URL.createObjectURL(attachment)
+                    } : null
+                };
+
+                chatHistory[recipient].push(messageObj);
+                saveChatHistory();
+                alert(`Message sent to ${recipient}: ${message}`);
+                closeComposeModal();
+                openChat(recipient);
+            } else {
+                alert("Recipient not found.");
+            }
+        } else {
+            alert("Please fill in both fields.");
+        }
+    }
+
+    function previewMedia(url, type) {
+        const previewModal = document.createElement('div');
+        previewModal.style.position = 'fixed';
+        previewModal.style.top = '0';
+        previewModal.style.left = '0';
+        previewModal.style.width = '100%';
+        previewModal.style.height = '100%';
+        previewModal.style.background = 'rgba(0, 0, 0, 0.8)';
+        previewModal.style.display = 'flex';
+        previewModal.style.justifyContent = 'center';
+        previewModal.style.alignItems = 'center';
+        previewModal.style.zIndex = '1000';
+        previewModal.onclick = () => document.body.removeChild(previewModal);
+        
+        if (type === 'image') {
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.maxWidth = '90%';
+            img.style.maxHeight = '90%';
+            previewModal.appendChild(img);
+        } else if (type === 'video') {
+            const video = document.createElement('video');
+            video.src = url;
+            video.controls = true;
+            video.style.maxWidth = '90%';
+            video.style.maxHeight = '90%';
+            previewModal.appendChild(video);
+        }
+
+        document.body.appendChild(previewModal);
+    }
+</script>
+</body>
+</html>
