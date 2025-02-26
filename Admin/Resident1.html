@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Blue Ridge B - Reservation</title>
+    <link rel="stylesheet" href="Resident1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="top-bar" id="top-bar">
+        <div class="menu-icon" onclick="toggleSidebar()">&#9776;</div> <!-- Menu icon -->
+        <h2>Residents</h2>
+    </div>
+    <div class="sidebar hidden" id="sidebar"> <!-- Added hidden class here -->
+        <div class="sidebar-top-bar">
+            <img src="Lbrb.png" alt="Logo" class="logo">
+            <h2>Barangay Records</h2>
+        </div>
+        <ul>
+            <li><a href="index.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">Home</a></li>
+            <li><a href="Messages1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=12623&format=png&color=FFFFFF" alt="Message">Message</a></li>
+            <li><a href="Resident1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=9491&format=png&color=FFFFFF" alt="Resident">Resident</a></li>
+            <li><a href="Staff.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=11777&format=png&color=FFFFFF" alt="Staff">Staff</a></li>
+            <li><a href="Reservation1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/warehouse.png" alt="Reservation">Reservation</a></li>
+            <li><a href="Announcement1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/megaphone.png" alt="Announcement">Announcement</a></li>
+            <li><a href="Login1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/logout-rounded.png" alt="Log Out">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content" id="main-content"> 
+          <div class="container">
+            <h1>Resident List</h1>
+            <div class="tab-menu">
+                <button class="tab-btn active" onclick="showTab('residents')">Residents</button>
+                <button class="tab-btn" onclick="showTab('archive')">Archive</button>
+            </div>
+            <div class="actions">
+                <input type="text" id="search-bar" placeholder="Search residents..." oninput="filterResidents()">
+            <div id="residents" class="tab-content active">
+                <ul class="resident-list" id="resident-list">
+
+                </ul>
+            </div>
+            <div id="archive" class="tab-content">
+                <ul class="resident-list" id="archive-list">
+                    <!-- Archived residents will appear here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resident Preview Modal -->
+    <div class="modal" id="resident-preview-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Resident Preview</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="resident-preview" class="preview">
+                    <!-- Preview will be dynamically populated here -->
+                </div>
+                <button class="edit-btn" onclick="openEditModal()">Edit</button>
+                <button class="archive-btn" onclick="archiveResident()">Archive</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Resident Modal -->
+    <div class="modal" id="add-edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Resident</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resident-form">
+                    <label for="full-name">Full Name:</label>
+                    <input type="text" id="full-name" required>
+
+                    <label for="gender">Gender:</label>
+                    <select id="gender">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" required>
+
+                    <label for="contact">Contact No:</label>
+                    <input type="text" id="contact" required>
+
+                    <label for="sss">SSS No:</label>
+                    <input type="text" id="sss">
+
+                    <label for="tin">TIN No:</label>
+                    <input type="text" id="tin">
+
+                    <label for="pagibig">PAG-IBIG No:</label>
+                    <input type="text" id="pagibig">
+
+                    <label for="city">City:</label>
+                    <input type="text" id="city" value="Riverdale" required>
+
+                    <label for="zip">Zip:</label>
+                    <input type="text" id="zip" value="3003" required>
+
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" required>
+
+                    <label for="blood-type">Blood Type:</label>
+                    <select id="blood-type">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+
+                    <button type="button" onclick="saveResident()">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentResident = null; // Track the currently viewed resident
+    
+        function viewResidentPreview(name, gender, address, contact, sss, tin, pagibig, city, zip, birthday, bloodType, id) {
+            currentResident = { name, gender, address, contact, sss, tin, pagibig, city, zip, birthday, bloodType, id };
+    
+            const previewDiv = document.getElementById('resident-preview');
+            previewDiv.innerHTML = `
+                <span><strong>Name:</strong> ${name}</span>
+                <span><strong>Gender:</strong> ${gender}</span>
+                <span><strong>Address:</strong> ${address}</span>
+                <span><strong>Contact No:</strong> ${contact}</span>
+                <span><strong>SSS No:</strong> ${sss}</span>
+                <span><strong>TIN No:</strong> ${tin}</span>
+                <span><strong>PAG-IBIG No:</strong> ${pagibig}</span>
+                <span><strong>City:</strong> ${city}</span>
+                <span><strong>Zip:</strong> ${zip}</span>
+                <span><strong>Birthday:</strong> ${birthday}</span>
+                <span><strong>Blood Type:</strong> ${bloodType}</span>
+            `;
+    
+            document.getElementById('resident-preview-modal').style.display = 'flex';
+        }
+    
+        function openEditModal() {
+            if (!currentResident) return;
+    
+            document.getElementById('add-edit-modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = 'Edit Resident';
+    
+            // Pre-fill the form with the current resident's details
+            document.getElementById('full-name').value = currentResident.name;
+            document.getElementById('gender').value = currentResident.gender;
+            document.getElementById('address').value = currentResident.address;
+            document.getElementById('contact').value = currentResident.contact;
+            document.getElementById('sss').value = currentResident.sss;
+            document.getElementById('tin').value = currentResident.tin;
+            document.getElementById('pagibig').value = currentResident.pagibig;
+            document.getElementById('city').value = currentResident.city;
+            document.getElementById('zip').value = currentResident.zip;
+            document.getElementById('birthday').value = currentResident.birthday;
+            document.getElementById('blood-type').value = currentResident.bloodType;
+        }
+    
+        function closeModal() {
+            document.getElementById('resident-preview-modal').style.display = 'none';
+            document.getElementById('add-edit-modal').style.display = 'none';
+        }
+    
+        function saveResident() {
+            const name = document.getElementById('full-name').value;
+            const gender = document.getElementById('gender').value;
+            const address = document.getElementById('address').value;
+            const contact = document.getElementById('contact').value;
+            const sss = document.getElementById('sss').value;
+            const tin = document.getElementById('tin').value;
+            const pagibig = document.getElementById('pagibig').value;
+            const city = document.getElementById('city').value;
+            const zip = document.getElementById('zip').value;
+            const birthday = document.getElementById('birthday').value;
+            const bloodType = document.getElementById('blood-type').value;
+    
+            if (!name || !gender || !address || !contact || !birthday || !city || !sss || !tin || !pagibig || !bloodType) {
+                alert('Please fill out all required fields.');
+                return;
+            }
+    
+            const list = document.getElementById('resident-list');
+            if (currentResident) {
+                // Update existing resident
+                const residentItems = list.getElementsByTagName('li');
+                for (let item of residentItems) {
+                    if (item.textContent.includes(currentResident.name)) {
+                        item.innerHTML = `
+                            <span onclick="viewResidentPreview('${name}', '${gender}', '${address}', '${contact}', '${sss}', '${tin}', '${pagibig}', '${city}', '${zip}', '${birthday}', '${bloodType}')">${name}</span>
+                            `;
+                        break;
+                    }
+                }
+            } else {
+                // Add new resident
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span onclick="viewResidentPreview('${name}', '${gender}', '${address}', '${contact}', '${sss}', '${tin}', '${pagibig}', '${city}', '${zip}', '${birthday}', '${bloodType}')">${name}</span>
+                `;
+                list.appendChild(li);
+            }
+    
+            closeModal();
+        }
+    
+        function archiveResident() {
+            if (currentResident) {
+                const archiveList = document.getElementById('archive-list');
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span onclick="viewArchivedResidentPreview('${currentResident.name}', '${currentResident.gender}', '${currentResident.address}', '${currentResident.contact}', '${currentResident.sss}', '${currentResident.tin}', '${currentResident.pagibig}', '${currentResident.city}', '${currentResident.zip}', '${currentResident.birthday}', '${currentResident.bloodType}')">${currentResident.name}</span>
+                `;
+                archiveList.appendChild(li);
+    
+                const residentList = document.getElementById('resident-list');
+                const residents = residentList.getElementsByTagName('li');
+                for (let i = 0; i < residents.length; i++) {
+                    if (residents[i].textContent.includes(currentResident.name)) {
+                        residentList.removeChild(residents[i]);
+                        break;
+                    }
+                }
+    
+                closeModal();
+    
+                // Display success message
+                alert('Resident archived successfully!');
+            }
+        }
+    
+        function viewArchivedResidentPreview(name, gender, address, contact, sss, tin, pagibig, city, zip, birthday, bloodType) {
+            const previewDiv = document.getElementById('resident-preview');
+            previewDiv.innerHTML = `
+                <span><strong>Name:</strong> ${name}</span>
+                <span><strong>Gender:</strong> ${gender}</span>
+                <span><strong>Address:</strong> ${address}</span>
+                <span><strong>Contact No:</strong> ${contact}</span>
+                <span><strong>SSS No:</strong> ${sss}</span>
+                <span><strong>TIN No:</strong> ${tin}</span>
+                <span><strong>PAG-IBIG No:</strong> ${pagibig}</span>
+                <span><strong>City:</strong> ${city}</span>
+                <span><strong>Zip:</strong> ${zip}</span>
+                <span><strong>Birthday:</strong> ${birthday}</span>
+                <span><strong>Blood Type:</strong> ${bloodType}</span>
+            `;
+    
+            document.getElementById('resident-preview-modal').style.display = 'flex';
+    
+            // Remove edit and archive buttons when viewing archived residents
+            const buttons = document.querySelector('.modal-body').querySelectorAll('.edit-btn, .archive-btn');
+            buttons.forEach(button => button.style.display = 'none');
+        }
+    
+        function showTab(tab) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            buttons.forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+    
+        function filterResidents() {
+            const searchQuery = document.getElementById('search-bar').value.toLowerCase();
+            const residentList = document.getElementById('resident-list');
+            const residents = residentList.getElementsByTagName('li');
+    
+            for (let i = 0; i < residents.length; i++) {
+                const residentName = residents[i].textContent.toLowerCase();
+                if (residentName.includes(searchQuery)) {
+                    residents[i].style.display = 'flex'; // Show the resident
+                } else {
+                    residents[i].style.display = 'none'; // Hide the resident
+                }
+            }
+        }
+    
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            var mainContent = document.getElementById("main-content");
+            var topBar = document.getElementById("top-bar");
+            if (sidebar.classList.contains("hidden")) {
+                sidebar.classList.remove("hidden");
+                mainContent.style.marginLeft = "270px";
+                topBar.style.marginLeft = "270px";
+            } else {
+                sidebar.classList.add("hidden");
+                mainContent.style.marginLeft = "0";
+                topBar.style.marginLeft = "0";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const sidebarLinks = document.querySelectorAll(".sidebar ul li");
+
+    sidebarLinks.forEach((link) => {
+        link.addEventListener("click", function () {
+            sidebarLinks.forEach((item) => item.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+});
+
+               // Fetch residents from the PHP file
+               function fetchResidents() {
+            fetch('fetch_residents.php') // Path to your PHP file
+                .then(response => response.json())
+                .then(data => {
+                    const residentList = document.getElementById('resident-list');
+                    residentList.innerHTML = ''; // Clear existing list
+
+                    // Loop through the residents and display them
+                    data.forEach(resident => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <p>${resident.first_name} ${resident.middle_name} ${resident.last_name}</p>
+                            <p>Address: ${resident.address}, ${resident.city} ${resident.zip_code}</p>
+                            <p>Contact: ${resident.contact_number}</p>
+                            <button onclick="viewResident(${resident.id})">View</button>
+                        `;
+                        residentList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Error fetching residents:', error));
+        }
+
+        // Call fetchResidents function when the page loads
+        document.addEventListener('DOMContentLoaded', fetchResidents);
+
+        // Save Resident Function (to handle form submission)
+        function saveResident() {
+            const form = document.getElementById('resident-form');
+            const formData = new FormData(form);
+
+            fetch('save_resident.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data); // You can show a success message here
+                fetchResidents(); // Refresh the list after saving the data
+            })
+            .catch(error => console.error('Error saving resident:', error));
+        }
+    </script>
+</body>
+</html>

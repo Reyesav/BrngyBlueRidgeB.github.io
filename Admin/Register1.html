@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Blue Ridge B - Registration</title>
+    <link rel="stylesheet" href="Register1.css">
+</head>
+<body>
+    <div class="container">
+        <img src="Lbrb.png" width="85" height="85" alt="Logo"> 
+        <h1>BARANGAY BLUE RIDGE B</h1>
+        <div class="text">
+            Create your account
+        </div>        
+        <div class="register-box">
+            <h2>REGISTER</h2>
+            <form action="Login1.html" method="POST">
+                <div class="form-row">
+                    <input type="text" placeholder="Username" required>
+                    <input type="email" placeholder="Email" required>
+                </div>
+                <div class="form-row">
+                    <input type="password" placeholder="Password" required>
+                    <input type="password" placeholder="Confirm Password" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" placeholder="First Name" required>
+                    <input type="text" placeholder="Contact No" pattern="\d{11}" title="Contact No must be 11 digits" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" placeholder="Middle Name">
+                    <input type="text" placeholder="Address" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" placeholder="Last Name" required>
+                    <input type="text" placeholder="City" required>
+                </div>
+                <div class="form-row">
+                    <input type="date" placeholder="Birthday" required>
+                    <input type="text" placeholder="Zip Code" pattern="\d{4,5}" title="Zip Code must be 4 to 5 digits" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" placeholder="SSS No" pattern="\d{10}" title="SSS No must be 10 digits" required>
+                    <input type="text" placeholder="TIN No" pattern="\d{9,12}" title="TIN No must be between 9 to 12 digits" required>
+                </div>
+                <div class="form-row">
+                    <input type="text" placeholder="Pag-IBIG No" pattern="\d{12}" title="Pag-IBIG No must be 12 digits" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            <p class="Login-link">Already have an account? <a href="Login1.html">Login Here</a></p>
+        </div>
+    </div>
+    <script>
+document.getElementById('register-box').addEventListener('submit', function(event) {
+    event.preventDefault();
+    window.location.href = 'Login1.html';
+});
+
+    </script>
+</body>
+</html>

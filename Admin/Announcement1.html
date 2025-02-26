@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Blue Ridge B - Announcement</title>
+    <link rel="stylesheet" href="Announcement1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<div class="top-bar" id="top-bar">
+    <div class="menu-icon" onclick="toggleSidebar()">&#9776;</div> <!-- Menu icon -->
+    <h2>Announcements</h2>
+    <div class="search-box">
+        <img src="https://img.icons8.com/ios-filled/50/000000/search--v1.png" alt="Search" style="width: 16px; height: 16px;">
+        <input type="text" placeholder="Search here">
+    </div>
+</div>
+<div class="sidebar hidden" id="sidebar"> <!-- Added hidden class here -->
+    <div class="sidebar-top-bar">
+        <img src="Lbrb.png" alt="Logo" class="logo">
+        <h2>Barangay Records</h2>
+    </div>
+    <ul>
+        <li><a href="index.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">Home</a></li>
+        <li><a href="Messages1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=12623&format=png&color=FFFFFF" alt="Message">Message</a></li>
+        <li><a href="Resident1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=9491&format=png&color=FFFFFF" alt="Resident">Resident</a></li>
+        <li><a href="Staff.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=11777&format=png&color=FFFFFF" alt="Staff">Staff</a></li>
+        <li><a href="Reservation1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/warehouse.png" alt="Reservation">Reservation</a></li>
+        <li><a href="Announcement1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/megaphone.png" alt="Announcement">Announcement</a></li>
+        <li><a href="Login1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/logout-rounded.png" alt="Log Out">Logout</a></li>
+    </ul>
+</div>
+<div class="main-content" id="main-content">
+    <button class="announcement-btn" onclick="location.href='Announcement2.html'">Create Announcement</button>
+</div>
+    <!-- Content -->
+    <div class="dashboard-container">
+        <!-- Announcements Section -->
+        <div class="card left-panel">
+            <h2>Post</h2>
+            <div id="announcements">
+                <div id="edit-modal" class="modal">
+                    <h3>Edit Announcement</h3>
+                    <input type="text" id="edit-title" placeholder="Title">
+                    <textarea id="edit-description" placeholder="Description"></textarea>
+                    <input type="file" id="file-input" multiple onchange="previewFiles()">
+                    <div id="file-preview"></div>
+                    <div class="modal-buttons">
+                        <button class="save-btn" onclick="saveEditedPost()">Save</button>
+                        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    </div>
+                </div>
+            <div class="announcement-item">
+                <strong>Community Clean-Up Drive</strong>
+                <p>Date: October 20, 2024</p>
+                <p>Join us in keeping our barangay clean! Meeting point at the barangay hall at 8 AM.</p>
+            </div>
+            <div class="announcement-item">
+                <strong>Health Awareness Seminar</strong>
+                <p>Date: October 25, 2024</p>
+                <p>Learn about health and wellness. Free consultation will be available!</p>
+            </div>
+            <div class="announcement-item">
+                <strong>Barangay Basketball Tournament</strong>
+                <p>Date: November 5-10, 2024</p>
+                <p>Sign up your teams at the barangay office. Exciting prizes await!</p>
+            </div>
+            <div class="announcement-item">
+                <strong>Free Pet Vaccine</strong>
+                <p>Date: November 5, 2024</p>
+                <p>Let your pets be vaccinated.</p>
+            </div>
+        </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+const announcementsContainer = document.getElementById("announcements");
+
+let storedPost = localStorage.getItem("announcement");
+
+if (storedPost) {
+    let post = JSON.parse(storedPost);
+    let announcementDiv = document.createElement("div");
+    announcementDiv.classList.add("announcement-item");
+
+    let postDate = new Date(post.date);
+    let formattedDate = postDate.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    });
+    let formattedTime = postDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
+
+    announcementDiv.innerHTML = `
+        <div class="announcement-header">
+            <h3>${post.title || "No Title"}</h3>
+            <div class="options">
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+        <p><strong>Posted on:</strong> ${formattedDate} - ${formattedTime}</p>
+        <p>${post.description || "No Description"}</p>
+        ${post.files && post.files.length > 0 ? post.files.map(file => `
+            <div class="attachment">
+                <img src="https://img.icons8.com/ios/50/000000/paperclip.png" alt="Attachment">
+                <a href="${file.url}" target="_blank">${file.name}</a>
+            </div>
+        `).join("") : ""}
+    `;
+
+    announcementsContainer.prepend(announcementDiv);
+
+    // Handle edit
+    let editBtn = announcementDiv.querySelector(".edit-btn");
+    editBtn.addEventListener("click", function () {
+        openEditModal(post.title, post.description);
+    });
+
+    // Handle delete
+    let deleteBtn = announcementDiv.querySelector(".delete-btn");
+    deleteBtn.addEventListener("click", function () {
+        if (confirm("Are you sure you want to delete this announcement?")) {
+            localStorage.removeItem("announcement");
+            location.reload();
+        }
+    });
+}
+});
+
+// Function to open edit modal
+function openEditModal(existingTitle, existingDescription) {
+document.getElementById("edit-title").value = existingTitle;  // Set title
+document.getElementById("edit-description").value = existingDescription;  // Set description
+document.getElementById("edit-modal").style.display = "block"; // Show modal
+}
+
+
+function openEditModal(existingTitle, existingDescription) {
+document.getElementById("edit-title").value = existingTitle;  // Set title
+document.getElementById("edit-description").value = existingDescription;  // Set description
+document.getElementById("edit-modal").style.display = "block"; // Show modal
+}
+// Function to save edited post
+function saveEditedPost() {
+let newTitle = document.getElementById("edit-title").value;
+let newDescription = document.getElementById("edit-description").value;
+let fileInput = document.getElementById("file-input");
+let files = Array.from(fileInput.files).map(file => ({
+    name: file.name,
+    url: URL.createObjectURL(file)
+}));
+
+if (newTitle.trim() !== "" && newDescription.trim() !== "") {
+    let storedPost = JSON.parse(localStorage.getItem("announcement")) || {};
+    storedPost.title = newTitle;
+    storedPost.description = newDescription;
+    storedPost.date = new Date().toISOString(); // Update timestamp
+    storedPost.files = files; // Update files
+    localStorage.setItem("announcement", JSON.stringify(storedPost));
+    location.reload();  // Reload to display the updated announcement
+}
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById("edit-modal").style.display = "none"; // Hide modal
+}
+
+function addNewPost(text) {
+let storedPosts = JSON.parse(localStorage.getItem("announcements")) || [];
+
+let newPost = {
+    text: text,
+    date: new Date().toISOString()
+};
+
+storedPosts.push(newPost);
+localStorage.setItem("announcements", JSON.stringify(storedPosts));
+
+location.reload();
+}
+
+function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            var mainContent = document.getElementById("main-content");
+            var topBar = document.getElementById("top-bar");
+            if (sidebar.classList.contains("hidden")) {
+                sidebar.classList.remove("hidden");
+                mainContent.style.marginLeft = "270px";
+                topBar.style.marginLeft = "270px";
+            } else {
+                sidebar.classList.add("hidden");
+                mainContent.style.marginLeft = "0";
+                topBar.style.marginLeft = "0";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const sidebarLinks = document.querySelectorAll(".sidebar ul li");
+
+    sidebarLinks.forEach((link) => {
+        link.addEventListener("click", function () {
+            sidebarLinks.forEach((item) => item.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+});
+</script>
+</body>
+</html>

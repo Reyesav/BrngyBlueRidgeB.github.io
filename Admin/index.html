@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barangay Blue Ridge B - Dashboard</title>
+    <link rel="stylesheet" href="Home1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="top-bar" id="top-bar">
+        <div class="menu-icon" onclick="toggleSidebar()">&#9776;</div> <!-- Menu icon -->
+        <h2>Home</h2>
+    </div>
+    <div class="sidebar hidden" id="sidebar"> <!-- Added hidden class here -->
+        <div class="sidebar-top-bar">
+            <img src="Lbrb.png" alt="Logo" class="logo">
+            <h2>Barangay Records</h2>
+        </div>
+        <ul>
+            <li><a href="index.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Home">Home</a></li>
+            <li><a href="Messages1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=12623&format=png&color=FFFFFF" alt="Message">Message</a></li>
+            <li><a href="Resident1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=9491&format=png&color=FFFFFF" alt="Resident">Resident</a></li>
+            <li><a href="Staff.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/?size=100&id=11777&format=png&color=FFFFFF" alt="Staff">Staff</a></li>
+            <li><a href="Reservation1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/warehouse.png" alt="Reservation">Reservation</a></li>
+            <li><a href="Announcement1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/megaphone.png" alt="Announcement">Announcement</a></li>
+            <li><a href="Login1.html" style="text-decoration: none; display: flex; align-items: center;"><img src="https://img.icons8.com/ios-filled/50/ffffff/logout-rounded.png" alt="Log Out">Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content" id="main-content">
+        <div class="header">
+            <h1>Dashboard</h1>
+        </div>
+        <div class="cards">
+            <div class="card yellow">
+                <i class="fas fa-users"></i>
+                <h3>11</h3>
+                <p>Total Residents</p>
+            </div>
+            <div class="card green">
+                <i class="fas fa-calendar-check"></i>
+                <h3>2</h3>
+                <p>Total Reservations</p>
+            </div>
+            <div class="card red">
+                <i class="fas fa-user-tie"></i>
+                <h3>6</h3>
+                <p>Barangay Officials</p>
+            </div>
+        </div>
+        <div class="list-section">
+            <h2>List of Officials</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Term From-To</th>
+                        <th>Status</th>
+                        <th>Purok</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img src="photo1.jpg" alt="Official 1"></td>
+                        <td>Amorio T Crischel</td>
+                        <td>Kagawad</td>
+                        <td>Jul 01, 2019 - Dec 05, 2020</td>
+                        <td class="not-active">Not Active</td>
+                        <td>Purok 2</td>
+                    </tr>
+                    <tr>
+                        <td><img src="photo2.jpg" alt="Official 2"></td>
+                        <td>Assassin P Helcurt</td>
+                        <td>Chairperson</td>
+                        <td>Dec 30, 2020 - Dec 31, 2020</td>
+                        <td class="active">Active</td>
+                        <td>Purok 1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            var mainContent = document.getElementById("main-content");
+            var topBar = document.getElementById("top-bar");
+            if (sidebar.classList.contains("hidden")) {
+                sidebar.classList.remove("hidden");
+                mainContent.style.marginLeft = "270px";
+                topBar.style.marginLeft = "270px";
+            } else {
+                sidebar.classList.add("hidden");
+                mainContent.style.marginLeft = "0";
+                topBar.style.marginLeft = "0";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+    const sidebarLinks = document.querySelectorAll(".sidebar ul li");
+
+    sidebarLinks.forEach((link) => {
+        link.addEventListener("click", function () {
+            sidebarLinks.forEach((item) => item.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+});
+    </script>
+</body>
+</html>

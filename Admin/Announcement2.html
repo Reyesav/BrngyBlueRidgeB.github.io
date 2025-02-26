@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Announcement</title>
+    <link rel="stylesheet" href="Announcement2.css">
+</head>
+<body>
+    <div class="announcement-container">
+        <h2>Create an Announcement</h2>
+        <input type="text" id="announcementTitle" placeholder="Enter Title">
+        <textarea id="announcementDescription" placeholder="Write your description..."></textarea>
+        <div class="file-upload">
+            <label for="fileInput">
+                <i class="fas fa-paperclip"></i> Attach File
+            </label>
+            <input type="file" id="fileInput" multiple>
+        </div>
+        <button onclick="postAnnouncement()">Post</button>
+        <button class="cancel-button" onclick="cancelAnnouncement()">Cancel</button> </div>
+
+        <script>
+            function postAnnouncement() {
+                const title = document.getElementById("announcementTitle").value;
+                const description = document.getElementById("announcementDescription").value;
+                const files = document.getElementById("fileInput").files;
+                const date = new Date();
+    
+                if (!title.trim() && !description.trim() && files.length === 0) {
+                    alert("Please fill in the title, description, or upload a file.");
+                    return;
+                }
+    
+                let post = {
+                    title: title,
+                    description: description,
+                    files: [],
+                    date: date.toLocaleString()
+                };
+    
+                for (let i = 0; i < files.length; i++) {
+                    post.files.push(files[i].name);
+                }
+    
+                localStorage.setItem("announcement", JSON.stringify(post));
+                window.location.href = "Announcement1.html"; // Or "Home.html" if that's the correct filename
+            }
+    
+            function cancelAnnouncement() {
+                window.location.href = "Announcement1.html"; // Redirect to Home.html
+            }
+        </script>
+</body>
+</html>

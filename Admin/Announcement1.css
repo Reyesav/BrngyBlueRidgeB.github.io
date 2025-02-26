@@ -1,0 +1,398 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6;
+    display: flex;
+    height: 100vh;
+    min-height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(4,9,30,0.7),rgba(4,9,30,0.7)),url('brbbg.jpg');
+    background-position: center;
+    background-size: cover;
+}
+.top-bar {
+    width: 100%;
+    height: 60px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; /* Allows elements to wrap if needed */
+    padding-bottom: 10px; /* Adds some spacing */
+    padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: margin-left 0.3s ease;
+}
+
+.top-bar .menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.sidebar {
+    width: 240px;
+    background: rgba(0, 122, 243, 0.8); /* Transparent background */
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 60px; /* Adjusted to be below the top bar */
+    padding-left: 20px;
+    padding-right: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+.sidebar-top-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-top-bar .logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.sidebar-top-bar h2 {
+    margin: 0;
+    font-size: 18px;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar ul li {
+    padding: 10px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 5px;
+}
+
+.sidebar ul li:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Light transparent white */
+    transform: translateX(5px); /* Slight shift effect */
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    color: #ffeb3b; /* Change text color on hover */
+}
+
+.sidebar ul li.active {
+    background-color: rgba(255, 255, 255, 0.3); /* Highlight active menu */
+    font-weight: bold;
+    border-left: 4px solid #ffeb3b; /* Add a left border for emphasis */
+    color: #ffeb3b;
+}
+
+.sidebar ul li.active a {
+    color: #ffeb3b; /* Ensure active link stays highlighted */
+}
+
+.sidebar ul li a img {
+    width: 24px;
+    height: 24px;
+}
+
+.main-content {
+    margin-left: 0; /* Start with sidebar hidden */
+    padding: 20px;
+    margin-top: 80px; /* Adjusted to be below the top bar */
+    transition: margin-left 0.3s;
+}
+    .search-box {
+        display: flex;
+        align-items: center;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+        padding: 5px 10px;
+        background-color: white;
+        margin-left: auto;
+        margin-right: 30px; /* Add margin-right to move it more to the right */
+    }
+
+    .search-box input {
+        border: none;
+        outline: none;
+        margin-left: 5px;
+    }
+
+    .dashboard-container {
+        display: flex;
+        flex-grow: 1;
+        padding: 20px;
+        width: 100%;
+        max-width: 1600px; /* Increase the max-width to make it wider */
+        margin-top: 80px; /* Adjusted to be below the top bar */
+    }
+
+    .left-panel {
+        flex: 3; /* Increase the flex value to make it wider */
+        padding-right: 20px;
+    }
+    
+    .card h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #2563eb;
+    }
+
+    /* Announcements Card */
+    .announcements {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Individual Announcements */
+    .announcement {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .announcement strong {
+        font-size: 16px;
+        display: block;
+    }
+
+    .announcement-item {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f9fafb;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        word-wrap: break-word;
+    }
+
+    .announcement-item h3 {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .announcement-item p {
+        margin: 5px 0 0;
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    .announcement-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .options {
+        display: flex;
+        gap: 10px; /* Spacing between buttons */
+        margin-top: 10px;
+    }
+    
+    .edit-btn, .delete-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Space between icon and text */
+    }
+    
+    /* Edit Button */
+    .edit-btn {
+        background-color: #facc15; /* Yellow color */
+        color: #000;
+    }
+    
+    .edit-btn:hover {
+        background-color: #eab308; /* Darker yellow on hover */
+        transform: translateY(-2px);
+    }
+    
+    .edit-btn:active {
+        transform: translateY(0);
+    }
+    
+    /* Delete Button */
+    .delete-btn {
+        background-color: #dc2626; /* Red color */
+        color: white;
+    }
+    
+    .delete-btn:hover {
+        background-color: #b91c1c; /* Darker red on hover */
+        transform: translateY(-2px);
+    }
+    
+    .delete-btn:active {
+        transform: translateY(0);
+    }
+
+    .show {
+        display: block;
+    }
+
+    /* Styling for the modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        z-index: 20;
+        width: 500px;
+        max-width: 100%;
+    }
+
+    .modal h3 {
+        margin: 0 0 15px;
+        font-size: 20px;
+    }
+
+    .modal input, .modal textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 5px;
+    }
+
+    .modal textarea {
+        height: 120px;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .modal-buttons button {
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .save-btn {
+        background: #2563eb;
+        color: white;
+    }
+
+    .cancel-btn {
+        background: #e5e7eb;
+    }
+
+    .attachment {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .attachment img {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+    }
+
+    .attachment a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .attachment a:hover {
+        text-decoration: underline;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .announcement-btn {
+        background-color: #2563eb; /* A professional blue shade */
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 600;
+        margin-top: 10px; /* Space below the search bar */
+    }
+    
+    .announcement-btn:hover {
+        background-color: #1e40af; /* Darker shade on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+    
+    .announcement-btn:active {
+        transform: translateY(0); /* Normal state when clicked */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .dashboard-container {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            width: 60px;
+        }
+
+        .sidebar:hover {
+            width: 200px;
+        }
+
+        .main-content {
+            margin-left: 60px;
+        }
+
+        .sidebar:hover ~ .main-content {
+            margin-left: 200px;
+        }
+    }
